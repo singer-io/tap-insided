@@ -21,3 +21,4 @@ The tap uses [OAuth 2.0 client credentials to access an inSided account](https:/
       "client_secret": <CLIENT_SECRET>
   }
 ```
+Copyright © 2020 Stitch
