@@ -20,8 +20,8 @@ def do_discover(client):
     LOGGER.info('Testing authentication')
     try:
         client.request('GET', path='/user')
-    except:
-        raise Exception('Error could not authenticate with InSided')
+    except Exception as e:
+        raise Exception('Error could not authenticate with InSided') from e
 
     LOGGER.info('Starting discover')
     catalog = discover()

@@ -5,14 +5,14 @@ import requests
 import singer
 from singer import metrics
 from ratelimit import limits, sleep_and_retry, RateLimitException
-from requests.exceptions import ConnectionError, Timeout
+from requests.exceptions import ConnectionError, Timeout #pylint: disable=redefined-builtin
 
 LOGGER = singer.get_logger()
 
 class Server5xxError(Exception):
     pass
 
-class InSidedClient(object):
+class InSidedClient(object):# pylint: disable=useless-object-inheritance
     BASE_URL = 'https://api2-us-west-2.insided.com'
 
     def __init__(self, config):
@@ -28,7 +28,7 @@ class InSidedClient(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, type, value, traceback):#pylint: disable=redefined-builtin
         self.__session.close()
 
     def refresh_access_token(self):
@@ -60,7 +60,7 @@ class InSidedClient(object):
                 method,
                 path=None,
                 url=None,
-                http_statuses_to_ignore=[],
+                http_statuses_to_ignore=None,
                 **kwargs):
         if 'headers' not in kwargs:
             kwargs['headers'] = {}
@@ -71,8 +71,8 @@ class InSidedClient(object):
         if not url:
             if self.__access_token is None or \
                self.__expires_at <= datetime.utcnow():
-                    self.refresh_access_token()
-        
+                self.refresh_access_token()
+
             kwargs['headers']['Authorization'] = 'Bearer {}'.format(self.__access_token)
 
             url = '{}{}'.format(self.BASE_URL, path)
@@ -89,12 +89,12 @@ class InSidedClient(object):
             response = self.__session.request(method, url, **kwargs)
             timer.tags[metrics.Tag.http_status_code] = response.status_code
 
-        if response.status_code in http_statuses_to_ignore:
+        if http_statuses_to_ignore and response.status_code in http_statuses_to_ignore:
             return None
 
         if response.status_code >= 500:
             raise Server5xxError()
 
-        response.raise_for_status() 
+        response.raise_for_status()
 
         return response.json()
