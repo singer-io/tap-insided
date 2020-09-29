@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='tap-insided',
-      version='0.0.1',
+      version='0.0.2',
       description='Singer.io tap for extracting data from the inSided API',
       classifiers=['Programming Language :: Python :: 3 :: Only'],
       py_modules=['tap_insided'],
@@ -13,6 +13,13 @@ setup(name='tap-insided',
         'requests==2.24.0',
         'singer-python==5.9.0'
       ],
+      extras_require={
+        'dev': [
+            'pylint',
+            'ipdb',
+            'nose'
+        ]
+      },
       entry_points='''
           [console_scripts]
           tap-insided=tap_insided:main

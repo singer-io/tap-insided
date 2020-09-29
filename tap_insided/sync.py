@@ -8,7 +8,7 @@ from tap_insided.endpoints import ENDPOINTS_CONFIG
 
 LOGGER = singer.get_logger()
 
-def nested_get(dic, path):
+def nested_get(dic, path): # pylint: disable=inconsistent-return-statements
     for key in path:
         value = dic.get(key)
         if value is None or key == path[-1]:
@@ -28,7 +28,7 @@ def write_schema(stream):
     schema = stream.schema.to_dict()
     singer.write_schema(stream.tap_stream_id, schema, stream.key_properties)
 
-def sync_endpoint(client,
+def sync_endpoint(client, #pylint: disable=too-many-statements
                   catalog,
                   state,
                   required_streams,
@@ -46,9 +46,9 @@ def sync_endpoint(client,
 
     path = endpoint['path'].format(**key_bag)
 
-    LOGGER.info('{} - Syncing: {}'.format(
+    LOGGER.info('%s - Syncing: %s',
                 stream_name,
-                path))
+                path)
 
     page_size = 10
     page = 1
@@ -59,11 +59,11 @@ def sync_endpoint(client,
             params['pageSize'] = page_size
             params['page'] = page
 
-            LOGGER.info('{} - {} - page_size: {}, page: {}'.format(
+            LOGGER.info('%s - %s - page_size: %s, page: %s',
                 stream_name,
                 path,
                 page_size,
-                page))
+                page)
 
         data = client.request('GET',
                               path=path,
@@ -74,13 +74,13 @@ def sync_endpoint(client,
         if data is None:
             return
 
-        if endpoint.get('number_indexed', False) == True:
+        if endpoint.get('number_indexed'):
             records = []
             for index, value in data.items():
                 try:
                     int(index)
                     records.append(value)
-                except:
+                except: # pylint: disable=bare-except
                     pass
         else:
             records = data['result']
@@ -128,8 +128,8 @@ def sync_endpoint(client,
         else:
             break
 
-def update_current_stream(state, stream_name=None):  
-    set_currently_syncing(state, stream_name) 
+def update_current_stream(state, stream_name=None):
+    set_currently_syncing(state, stream_name)
     singer.write_state(state)
 
 def get_required_streams(endpoints, selected_stream_names):
@@ -145,7 +145,7 @@ def get_required_streams(endpoints, selected_stream_names):
                 required_streams += child_required_streams
     return required_streams
 
-def sync(client, config, catalog, state):
+def sync(client, _, catalog, state):
     if not catalog:
         catalog = discover()
         selected_streams = catalog.streams

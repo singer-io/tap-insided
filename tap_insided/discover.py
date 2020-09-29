@@ -22,7 +22,7 @@ def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
 def get_schema(stream_name, endpoint):
-    global SCHEMAS, FIELD_METADATA
+    global SCHEMAS, FIELD_METADATA # pylint: disable=global-statement
 
     if stream_name in SCHEMAS:
         return SCHEMAS[stream_name], FIELD_METADATA[stream_name]
@@ -37,7 +37,7 @@ def get_schema(stream_name, endpoint):
         schema = json.load(data_file)
 
     metadata = []
-    for prop, json_schema in schema['properties'].items():
+    for prop, _ in schema['properties'].items():
         if prop in endpoint['pk']:
             inclusion = 'automatic'
         else:
