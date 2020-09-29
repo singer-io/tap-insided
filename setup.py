@@ -13,6 +13,13 @@ setup(name='tap-insided',
         'requests==2.24.0',
         'singer-python==5.9.0'
       ],
+      extras_require={
+        'dev': [
+            'pylint',
+            'ipdb',
+            'nose'
+        ]
+      },
       entry_points='''
           [console_scripts]
           tap-insided=tap_insided:main
